@@ -14,55 +14,80 @@ El algoritmo simula el comportamiento de los gatos que pasan la mayor parte del 
 - **CSO.py**: Implementación completa del algoritmo Cat Swarm Optimization
 - **CSO_comparison.py**: Comparación entre CSO, PSO y Firefly Algorithm
 - Optimización de la función de benchmark **Shekel** con múltiples máximos locales
-- Visualizaciones interactivas en 2D y 3D
+- Visualizaciones interactivas en 2D y 3D con matplotlib
 - Métricas de rendimiento y análisis comparativo
+- Resultados pre-generados incluidos en el repositorio
+- Documentación técnica en formato PDF
 
 ## 📋 Requisitos
 
 - Python >= 3.11
-- Dependencias (se instalan automáticamente):
+- **uv** - Gestor de paquetes y entornos Python (recomendado)
+- Dependencias (se instalan automáticamente con `uv sync`):
   - numpy >= 1.24.0
   - deap >= 1.4.0
   - matplotlib >= 3.7.0
+  - ipykernel >= 7.1.0
 
 ## 🚀 Instalación
 
-1. Clona o descarga este repositorio
-2. Instala las dependencias usando `uv` o `pip`:
+### Opción 1: Con uv (Recomendado)
+
+1. Clona el repositorio:
+```bash
+git clone https://github.com/JuanpeLoyola/cso.git
+cd cso
+```
+
+2. Sincroniza el entorno y las dependencias:
+```bash
+uv sync
+```
+
+Esto creará automáticamente un entorno virtual y instalará todas las dependencias especificadas en `pyproject.toml`.
+
+### Opción 2: Con pip tradicional
 
 ```bash
-# Con uv (recomendado)
-uv pip install -e .
-
-# Con pip
 pip install -e .
 ```
 
 ## 💻 Uso
 
-### Ejecutar CSO
+### Con uv (Recomendado)
 
+#### Ejecutar CSO
 ```bash
-python CSO.py
+uv run python CSO.py
 ```
 
 Este script ejecuta el algoritmo CSO y genera:
-- Gráfica de convergencia
+- Gráfica de convergencia (`CSO_results.png`)
 - Visualización 3D del paisaje de optimización
 - Animación del movimiento de los gatos (opcional)
+- Métricas de rendimiento en consola
 
-### Ejecutar comparación de algoritmos
-
+#### Ejecutar comparación de algoritmos
 ```bash
-python CSO_comparison.py
+uv run python CSO_comparison.py
 ```
 
-Este script compara el rendimiento de:
-- Cat Swarm Optimization (CSO)
-- Particle Swarm Optimization (PSO)
-- Firefly Algorithm
+Este script compara el rendimiento de tres algoritmos:
+- **Cat Swarm Optimization (CSO)**
+- **Particle Swarm Optimization (PSO)**
+- **Firefly Algorithm**
 
-Genera visualizaciones comparativas de convergencia y rendimiento.
+Genera visualizaciones comparativas:
+- `algorithms_comparison.png` - Comparación general
+- `algorithms_comparison_shekel.png` - Comparación específica en función Shekel
+
+### Con Python tradicional
+
+Si instalaste con pip, puedes ejecutar directamente:
+```bash
+python CSO.py
+python CSO_comparison.py
+```
 
 ## ⚙️ Parámetros del algoritmo CSO
 
@@ -84,16 +109,53 @@ El proyecto utiliza la **función Shekel** con tres máximos locales en 2 dimens
 
 ```
 cso/
-├── CSO.py                 # Implementación del algoritmo CSO
-├── CSO_comparison.py      # Comparación con otros algoritmos
-├── main.py                # Script principal (placeholder)
-├── pyproject.toml         # Configuración del proyecto
-└── README.md              # Este archivo
+├── CSO.py                              # Implementación del algoritmo CSO
+├── CSO_comparison.py                   # Comparación con PSO y Firefly
+├── main.py                             # Script principal (placeholder)
+├── pyproject.toml                      # Configuración del proyecto y dependencias
+├── uv.lock                             # Lock file de uv para reproducibilidad
+├── README.md                           # Este archivo
+├── .python-version                     # Versión de Python del proyecto
+├── .gitignore                          # Archivos ignorados por git
+│
+├── 📄 Documentación:
+│   └── Cat_Swarm_Optimization.pdf     # Paper de referencia del algoritmo
+│
+└── 📊 Resultados generados:
+    ├── CSO_results.png                 # Visualización de resultados CSO
+    ├── algorithms_comparison.png       # Comparación de algoritmos
+    └── algorithms_comparison_shekel.png # Comparación en función Shekel
 ```
+
+## 📊 Resultados
+
+El repositorio incluye resultados pre-generados de las ejecuciones:
+
+- **CSO_results.png**: Gráficas de convergencia y exploración del algoritmo CSO
+- **algorithms_comparison.png**: Comparación visual del rendimiento de CSO vs PSO vs Firefly
+- **algorithms_comparison_shekel.png**: Análisis específico en la función de benchmark Shekel
+
+Estos archivos se sobrescriben cada vez que ejecutas los scripts.
 
 ## 📚 Referencias
 
 - Chu, S. C., Tsai, P. W., & Pan, J. S. (2006). Cat swarm optimization. In Pacific Rim international conference on artificial intelligence (pp. 854-858). Springer, Berlin, Heidelberg.
+- Paper incluido en el repositorio: `Cat_Swarm_Optimization.pdf`
+
+## 🛠️ Tecnologías utilizadas
+
+- **Python 3.11+**: Lenguaje de programación
+- **uv**: Gestor de paquetes y entornos Python ultrarrápido
+- **DEAP**: Framework para algoritmos evolutivos
+- **NumPy**: Computación numérica
+- **Matplotlib**: Visualización de datos
+
+## 📝 Notas
+
+- El proyecto utiliza `uv` como gestor de dependencias para garantizar reproducibilidad y velocidad
+- El archivo `uv.lock` asegura que todos instalen exactamente las mismas versiones de dependencias
+- Los scripts pueden ejecutarse como notebooks Jupyter gracias a `ipykernel`
+- Los gráficos se generan automáticamente y se guardan en el directorio raíz
 
 ## 👨‍💻 Autor
 
