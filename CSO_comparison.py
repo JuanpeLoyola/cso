@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Comparación entre algoritmos de optimización bio-inspirados
 CSO vs PSO vs Firefly
