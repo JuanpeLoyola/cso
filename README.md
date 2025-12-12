@@ -1,23 +1,33 @@
 # Cat Swarm Optimization (CSO)
 
-Implementación del algoritmo **Cat Swarm Optimization (CSO)** y comparación con otros algoritmos bio-inspirados (PSO y Firefly).
+Comparación completa de algoritmos de enjambre bio-inspirados: **CSO**, **PSO**, **ACO** y **Firefly**.
 
 ## 📖 Descripción
 
-Este proyecto implementa el algoritmo CSO basado en el paper:
-> "Cat Swarm Optimization" por Shu-Chuan Chu, Pei-Wei Tsai, and Jeng-Shyang Pan (2006)
+Este proyecto implementa y compara cuatro algoritmos de optimización basados en el comportamiento de enjambres:
 
-El algoritmo simula el comportamiento de los gatos que pasan la mayor parte del tiempo descansando y observando (**Seeking Mode**) y un pequeño porcentaje cazando (**Tracing Mode**).
+1. **Cat Swarm Optimization (CSO)** - Basado en el paper de Chu, Tsai & Pan (2006)
+   - Simula gatos en modo descanso/observación (**Seeking Mode**) y caza (**Tracing Mode**)
+   
+2. **Particle Swarm Optimization (PSO)** - Optimización por enjambre de partículas
+   
+3. **Ant Colony Optimization (ACO)** - Optimización por colonia de hormigas (versión continua)
+   
+4. **Firefly Algorithm (FA)** - Algoritmo de luciérnagas
+
+Todos los algoritmos están implementados usando el framework **DEAP** y se comparan en dos funciones de benchmark:
+- **Rosenbrock** (minimización)
+- **H1** (maximización)
 
 ## 🎯 Características
 
-- **CSO.py**: Implementación completa del algoritmo Cat Swarm Optimization
-- **CSO_comparison.py**: Comparación entre CSO, PSO y Firefly Algorithm
-- Optimización de la función de benchmark **Shekel** con múltiples máximos locales
-- Visualizaciones interactivas en 2D y 3D con matplotlib
-- Métricas de rendimiento y análisis comparativo
-- Resultados pre-generados incluidos en el repositorio
-- Documentación técnica en formato PDF
+- Implementación completa de 4 algoritmos bio-inspirados
+- Comparación justa con los mismos parámetros de población e iteraciones
+- Optimización de funciones benchmark clásicas
+- Visualizaciones separadas para cada función objetivo
+- Métricas de rendimiento comparativas
+- Resultados guardados automáticamente como imágenes PNG
+- Documentación técnica del paper original incluida
 
 ## 📋 Requisitos
 
@@ -56,88 +66,137 @@ pip install -e .
 
 ### Con uv (Recomendado)
 
-#### Ejecutar CSO
 ```bash
-uv run python CSO.py
+uv run python main.py
 ```
-
-Este script ejecuta el algoritmo CSO y genera:
-- Gráfica de convergencia (`CSO_results.png`)
-- Visualización 3D del paisaje de optimización
-- Animación del movimiento de los gatos (opcional)
-- Métricas de rendimiento en consola
-
-#### Ejecutar comparación de algoritmos
-```bash
-uv run python CSO_comparison.py
-```
-
-Este script compara el rendimiento de tres algoritmos:
-- **Cat Swarm Optimization (CSO)**
-- **Particle Swarm Optimization (PSO)**
-- **Firefly Algorithm**
-
-Genera visualizaciones comparativas:
-- `algorithms_comparison.png` - Comparación general
-- `algorithms_comparison_shekel.png` - Comparación específica en función Shekel
 
 ### Con Python tradicional
 
-Si instalaste con pip, puedes ejecutar directamente:
+Si instalaste con pip:
 ```bash
-python CSO.py
-python CSO_comparison.py
+python main.py
 ```
 
-## ⚙️ Parámetros del algoritmo CSO
+### ¿Qué hace el script?
 
-| Parámetro | Valor por defecto | Descripción |
-|-----------|-------------------|-------------|
-| `N_CATS` | 50 | Número de gatos (población) |
+El script `main.py` ejecuta los **4 algoritmos** (CSO, PSO, ACO, Firefly) en **2 funciones de benchmark**:
+
+1. **Rosenbrock** (minimización): Función clásica con valle estrecho
+2. **H1** (maximización): Función multimodal con múltiples óptimos
+
+**Salida generada:**
+- `images/cso_pso_aco_rosenbrock.png` - Comparación en función Rosenbrock
+- `images/cso_pso_aco_h1.png` - Comparación en función H1
+- Tabla comparativa de resultados en consola
+
+## ⚙️ Parámetros de configuración
+
+### Parámetros generales
+| Parámetro | Valor | Descripción |
+|-----------|-------|-------------|
+| `N_AGENTS` | 30 | Tamaño de población (común para todos los algoritmos) |
 | `N_ITERATIONS` | 100 | Número de iteraciones |
-| `MR` | 0.20 | Mixture Ratio: proporción en Tracing Mode |
-| `SMP` | 5 | Seeking Memory Pool: copias generadas en seeking mode |
-| `SRD` | 0.2 | Seeking Range: rango de mutación (20% del rango) |
-| `CDC` | 0.8 | Counts of Dimension to Change (80% de dimensiones) |
+| `DIMENSIONS` | 2 | Dimensiones del problema |
+| `SEED` | 42 | Semilla para reproducibilidad |
+
+### Parámetros específicos de CSO
+| Parámetro | Valor | Descripción |
+|-----------|-------|-------------|
+| `MR` | 0.2 | Mixture Ratio: proporción en Tracing Mode |
+| `SMP` | 5 | Seeking Memory Pool: copias generadas |
+| `SRD` | 0.2 | Seeking Range: rango de mutación |
+| `CDC` | 0.8 | Counts of Dimension to Change |
 | `C1` | 2.0 | Constante para tracing mode |
+
+### Parámetros específicos de PSO
+| Parámetro | Valor | Descripción |
+|-----------|-------|-------------|
+| `w` | 0.5 | Factor de inercia |
+| `c1` | 1.5 | Coeficiente cognitivo |
+| `c2` | 1.5 | Coeficiente social |
+
+### Parámetros específicos de ACO
+| Parámetro | Valor | Descripción |
+|-----------|-------|-------------|
+| `evaporation` | 0.5 | Tasa de evaporación de feromonas |
+| `Q` | 1.0 | Constante de depósito de feromonas |
+
+### Parámetros específicos de Firefly
+| Parámetro | Valor | Descripción |
+|-----------|-------|-------------|
+| `alpha` | 0.2 | Paso aleatorio |
+| `beta0` | 1.0 | Atracción máxima |
+| `gamma` | 1.0 | Coeficiente de absorción de luz |
 
 ## 📊 Funciones de benchmark
 
-El proyecto utiliza la **función Shekel** con tres máximos locales en 2 dimensiones, ideal para probar algoritmos de optimización en problemas multimodales.
+### Función Rosenbrock (Minimización)
+- Función clásica con valle estrecho en forma de banana
+- Óptimo global: f(1, 1) = 0
+- Rango: [-30, 30]
+- Ideal para probar convergencia fina
+
+### Función H1 (Maximización)  
+- Función multimodal con múltiples máximos locales
+- Rango: [-100, 100]
+- Ideal para probar exploración y escape de óptimos locales
 
 ## 🏗️ Estructura del proyecto
 
 ```
 cso/
-├── CSO.py                              # Implementación del algoritmo CSO
-├── CSO_comparison.py                   # Comparación con PSO y Firefly
-├── main.py                             # Script principal (placeholder)
+├── main.py                             # Script principal con implementación y comparación
 ├── pyproject.toml                      # Configuración del proyecto y dependencias
 ├── uv.lock                             # Lock file de uv para reproducibilidad
 ├── README.md                           # Este archivo
-├── .python-version                     # Versión de Python del proyecto
+├── .python-version                     # Versión de Python del proyecto (3.11)
 ├── .gitignore                          # Archivos ignorados por git
 │
 ├── 📄 Documentación:
-│   └── Cat_Swarm_Optimization.pdf     # Paper de referencia del algoritmo
+│   └── Cat_Swarm_Optimization.pdf     # Paper original de referencia del CSO
 │
-└── 📊 Resultados generados:
-    ├── CSO_results.png                 # Visualización de resultados CSO
-    ├── algorithms_comparison.png       # Comparación de algoritmos
-    └── algorithms_comparison_shekel.png # Comparación en función Shekel
+└── 📊 images/                          # Resultados generados
+    ├── cso_pso_aco_rosenbrock.png     # Comparación en función Rosenbrock
+    └── cso_pso_aco_h1.png             # Comparación en función H1
 ```
 
 ## 📊 Resultados
 
-El repositorio incluye resultados pre-generados de las ejecuciones:
+El script genera automáticamente dos gráficas en el directorio `images/`:
 
-- **CSO_results.png**: Gráficas de convergencia y exploración del algoritmo CSO
-- **algorithms_comparison.png**: Comparación visual del rendimiento de CSO vs PSO vs Firefly
-- **algorithms_comparison_shekel.png**: Análisis específico en la función de benchmark Shekel
+- **cso_pso_aco_rosenbrock.png**: Comparación de convergencia en función Rosenbrock (minimización)
+  - Muestra curvas de convergencia de los 4 algoritmos
+  - Escala logarítmica en eje Y para mejor visualización
+  
+- **cso_pso_aco_h1.png**: Comparación de convergencia en función H1 (maximización)
+  - Muestra la capacidad de exploración de cada algoritmo
+  - Ideal para ver escape de óptimos locales
 
-Estos archivos se sobrescriben cada vez que ejecutas los scripts.
+Además, el script imprime una tabla comparativa con los mejores resultados encontrados por cada algoritmo.
 
-## 📚 Referencias
+## � Algoritmos implementados
+
+### 1. Cat Swarm Optimization (CSO)
+Simula el comportamiento de los gatos con dos modos:
+- **Seeking Mode**: Los gatos descansan y observan (exploración local)
+- **Tracing Mode**: Los gatos persiguen objetivos (explotación)
+
+### 2. Particle Swarm Optimization (PSO)
+Basado en el comportamiento social de bandadas de aves:
+- Cada partícula recuerda su mejor posición personal
+- Las partículas son atraídas hacia el mejor global del enjambre
+
+### 3. Ant Colony Optimization (ACO)
+Inspirado en el comportamiento de hormigas buscando comida:
+- Las hormigas depositan feromonas en buenos caminos
+- Versión continua adaptada para optimización numérica
+
+### 4. Firefly Algorithm (FA)
+Basado en el patrón de destello de las luciérnagas:
+- Luciérnagas menos brillantes se mueven hacia las más brillantes
+- La intensidad depende de la distancia y la calidad de la solución
+
+## �📚 Referencias
 
 - Chu, S. C., Tsai, P. W., & Pan, J. S. (2006). Cat swarm optimization. In Pacific Rim international conference on artificial intelligence (pp. 854-858). Springer, Berlin, Heidelberg.
 - Paper incluido en el repositorio: `Cat_Swarm_Optimization.pdf`
@@ -146,16 +205,17 @@ Estos archivos se sobrescriben cada vez que ejecutas los scripts.
 
 - **Python 3.11+**: Lenguaje de programación
 - **uv**: Gestor de paquetes y entornos Python ultrarrápido
-- **DEAP**: Framework para algoritmos evolutivos
-- **NumPy**: Computación numérica
-- **Matplotlib**: Visualización de datos
+- **DEAP**: Framework para algoritmos evolutivos y optimización
+- **NumPy**: Computación numérica y operaciones con arrays
+- **Matplotlib**: Visualización de datos y generación de gráficas
 
-## 📝 Notas
+## 📝 Notas técnicas
 
-- El proyecto utiliza `uv` como gestor de dependencias para garantizar reproducibilidad y velocidad
+- El proyecto utiliza `uv` como gestor de dependencias para garantizar reproducibilidad y velocidad de instalación
 - El archivo `uv.lock` asegura que todos instalen exactamente las mismas versiones de dependencias
 - Los scripts pueden ejecutarse como notebooks Jupyter gracias a `ipykernel`
-- Los gráficos se generan automáticamente y se guardan en el directorio raíz
+- Todos los algoritmos usan la misma semilla aleatoria (42) para comparación justa
+- Los gráficos se generan automáticamente en alta resolución (300 DPI) en el directorio `images/`
 
 ## 👨‍💻 Autor
 
