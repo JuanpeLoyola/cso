@@ -242,7 +242,7 @@ Firefly    | 1.5678e-02           | 8.3456
 **Juan Pedro García Sanz** y **Adolfo Peña Marín**
 
 Implementación para el Máster en Inteligencia Artificial  
-Universidad: [Tu Universidad]  
+Universidad: Universidad Loyola Andalucía (Sevilla)
 Fecha: Diciembre 2025
 
 ## 📄 Licencia
