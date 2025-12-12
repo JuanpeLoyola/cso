@@ -15,6 +15,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from deap import base, creator, tools, benchmarks
 
+import warnings
+warnings.filterwarnings("ignore")
+
 # =============================================================================
 # CONFIGURACIÓN GENERAL
 # =============================================================================
