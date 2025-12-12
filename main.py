@@ -408,7 +408,7 @@ plt.yscale("log")
 plt.grid(True, alpha=0.3)
 plt.legend()
 plt.tight_layout()
-plt.savefig('cso_pso_aco_rosenbrock.png', dpi=300, bbox_inches='tight')
+plt.savefig('images/cso_pso_aco_rosenbrock.png', dpi=300, bbox_inches='tight')
 plt.show()
 
 # Gráfica H1
@@ -423,7 +423,7 @@ plt.ylabel("Fitness")
 plt.grid(True, alpha=0.3)
 plt.legend()
 plt.tight_layout()
-plt.savefig('cso_pso_aco_h1.png', dpi=300, bbox_inches='tight')
+plt.savefig('images/cso_pso_aco_h1.png', dpi=300, bbox_inches='tight')
 plt.show()
 
 print("\nResultados Finales (Mejor encontrado):")
