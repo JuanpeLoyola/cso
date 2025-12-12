@@ -5,8 +5,8 @@ CSO vs PSO vs ACO vs Firefly
 Incluye:
 1. Cat Swarm Optimization (CSO)
 2. Particle Swarm Optimization (PSO)
-3. Ant Colony Optimization (ACO Continuo)
-4. Firefly Algorithm (FA) - Basado en el código del profesor
+3. Ant Colony Optimization (ACO)
+4. Firefly Algorithm (FA)
 """
 
 import random
@@ -55,76 +55,142 @@ def get_evaluate_func(func_name):
 # =============================================================================
 
 def run_cso(func_name, bounds_min, bounds_max, problem_type="min"):
+    """
+    Implementa Cat Swarm Optimization
+    Los gatos alternan entre dos modos: Seeking (exploración) y Tracing (explotación)
+    """
     # Parámetros CSO
-    MR, SMP, SRD, CDC, C1 = 0.2, 5, 0.2, 0.8, 2.0
+    MR = 0.2    # Mixture Ratio: 20% de gatos en modo Tracing (cazando)
+    SMP = 5     # Seeking Memory Pool: número de copias a generar por gato en Seeking
+    SRD = 0.2   # Seeking Range of selected Dimension: rango de mutación (20% del espacio)
+    CDC = 0.8   # Counts of Dimension to Change: probabilidad de mutar dimensión (80%)
+    C1 = 2.0    # Constante de velocidad para Tracing Mode (similar a PSO)
     
+    # Seleccionar clase de fitness según si es minimización o maximización
     FitnessClass = creator.FitnessMin if problem_type == "min" else creator.FitnessMax
-    # Importante: Aseguramos que la clase exista o se sobrescriba correctamente
+
+    # Eliminar clase anterior si existe (para evitar conflictos en múltiples ejecuciones)
     if "AgentCSO" in dir(creator):
         del creator.AgentCSO
+    # Crear clase de agente con posición, fitness, velocidad y modo
     creator.create("AgentCSO", list, fitness=FitnessClass, velocity=list, mode=str)
     
+    # Obtener función de evaluación (rosenbrock o h1)
     evaluate = get_evaluate_func(func_name)
 
-    # Inicialización
-    cats = []
-    for _ in range(N_AGENTS):
+    # =========================================================================
+    # INICIALIZACIÓN DE LA POBLACIÓN
+    # =========================================================================
+    cats = []  # Lista para almacenar todos los gatos
+    for _ in range(N_AGENTS):  # Crear N_AGENTS gatos
+        # Crear gato con posición aleatoria en cada dimensión
         cat = creator.AgentCSO(random.uniform(bounds_min, bounds_max) for _ in range(DIMENSIONS))
+        # Inicializar velocidad aleatoria entre -1 y 1
         cat.velocity = [random.uniform(-1, 1) for _ in range(DIMENSIONS)]
+        # Inicialmente todos están en modo "seeking" (descansando/observando)
         cat.mode = "seeking"
+        # Evaluar fitness del gato en su posición inicial
         cat.fitness.values = evaluate(cat)
+        # Añadir gato a la población
         cats.append(cat)
-        
+    
+    # Encontrar el mejor gato inicial (max para maximización, min para minimización)
     best_cat = (max(cats, key=lambda c: c.fitness.values[0]) if problem_type == "max" 
                 else min(cats, key=lambda c: c.fitness.values[0]))
+    # Guardar posición del mejor gato
     best_pos = list(best_cat)
+    # Historial de convergencia (guarda el mejor fitness por iteración)
     history = [best_cat.fitness.values[0]]
     
+    # =========================================================================
+    # BUCLE PRINCIPAL DE ITERACIONES
+    # =========================================================================
     for _ in range(N_ITERATIONS):
-        # Asignar modos
+        # =====================================================================
+        # ASIGNACIÓN DE MODOS (Seeking vs Tracing)
+        # =====================================================================
+        # Calcular cuántos gatos estarán en modo Tracing (MR = 20%)
         num_tracing = int(N_AGENTS * MR)
+        # Crear lista de índices y mezclarlos aleatoriamente
         indices = list(range(N_AGENTS))
         random.shuffle(indices)
+        # Asignar modos: primeros num_tracing → tracing, resto → seeking
         for i, idx in enumerate(indices):
             cats[idx].mode = "tracing" if i < num_tracing else "seeking"
-            
+        
+        # =====================================================================
+        # ACTUALIZACIÓN DE CADA GATO SEGÚN SU MODO
+        # =====================================================================
         for cat in cats:
+            # =================================================================
+            # SEEKING MODE (Modo descanso/observación - EXPLORACIÓN)
+            # =================================================================
             if cat.mode == "seeking":
-                copies = []
+                copies = []  # Lista para almacenar copias del gato
+                
+                # Crear SMP copias del gato actual
                 for _ in range(SMP):
+                    # Crear copia del gato
                     copy_cat = creator.AgentCSO(cat)
+                    
+                    # Con probabilidad CDC, mutar las dimensiones
                     if random.random() < CDC:
                         for d in range(DIMENSIONS):
+                            # Calcular mutación: SRD * rango_total * valor_aleatorio_[-1,1]
                             mutation = SRD * (bounds_max - bounds_min) * (random.random() - 0.5) * 2
+                            # Aplicar mutación y asegurar que esté dentro de los límites
                             copy_cat[d] = bound_position(copy_cat[d] + mutation, bounds_min, bounds_max)
+                    
+                    # Añadir copia a la lista
                     copies.append(copy_cat)
                 
+                # Evaluar fitness de todas las copias
                 fits = [evaluate(c)[0] for c in copies]
+                # Seleccionar la mejor copia (max para maximizar, min para minimizar)
                 best_idx = np.argmax(fits) if problem_type == "max" else np.argmin(fits)
                 
+                # Actualizar posición del gato con la mejor copia
                 cat[:] = copies[best_idx][:]
+                # Actualizar fitness del gato
                 cat.fitness.values = (fits[best_idx],)
 
-            else: # Tracing
+            # =================================================================
+            # TRACING MODE (Modo caza - EXPLOTACIÓN)
+            # =================================================================
+            else:
+                # Actualizar cada dimensión usando ecuación de velocidad
                 for d in range(DIMENSIONS):
+                    # Número aleatorio para componente estocástica
                     r = random.random()
+                    # Actualizar velocidad: v = v + C1 * r * (mejor_posición - posición_actual)
+                    # Similar a PSO pero solo con componente global
                     cat.velocity[d] += C1 * r * (best_pos[d] - cat[d])
+                    # Limitar velocidad al 10% del rango del espacio de búsqueda
                     v_limit = (bounds_max - bounds_min) * 0.1
                     cat.velocity[d] = max(-v_limit, min(v_limit, cat.velocity[d]))
+                    # Actualizar posición: x = x + v
                     cat[d] = bound_position(cat[d] + cat.velocity[d], bounds_min, bounds_max)
+                
+                # Evaluar fitness en la nueva posición
                 cat.fitness.values = evaluate(cat)
 
-            # --- CORRECCIÓN AQUÍ ---
-            # Actualizar Global
+            # =================================================================
+            # ACTUALIZACIÓN DEL MEJOR GLOBAL
+            # =================================================================
+            # Verificar si el gato actual es mejor que el mejor global
             better = (cat.fitness.values[0] > best_cat.fitness.values[0]) if problem_type == "max" \
                      else (cat.fitness.values[0] < best_cat.fitness.values[0])
             
+            # Si es mejor, actualizar el mejor global
             if better:
-                best_cat = creator.AgentCSO(cat)       # Copia la posición
-                best_cat.fitness.values = cat.fitness.values  # <--- ESTA LÍNEA FALTABA
-                best_pos = list(cat)
+                best_cat = creator.AgentCSO(cat)    # Crear copia del gato
+                best_cat.fitness.values = cat.fitness.values  # Copiar fitness
+                best_pos = list(cat)  # Guardar posición del mejor
         
+        # Guardar mejor fitness de esta iteración en el historial
         history.append(best_cat.fitness.values[0])
+    
+    # Retornar historial de convergencia
     return history
 
 # =============================================================================
@@ -176,7 +242,7 @@ def run_pso(func_name, bounds_min, bounds_max, problem_type="min"):
     return history
 
 # =============================================================================
-# 3. ALGORITMO ACO (ANT COLONY - CONTINUOUS)
+# 3. ALGORITMO ACO (ANT COLONY)
 # =============================================================================
 
 def run_aco(func_name, bounds_min, bounds_max, problem_type="min"):
@@ -221,15 +287,11 @@ def run_aco(func_name, bounds_min, bounds_max, problem_type="min"):
     return history
 
 # =============================================================================
-# 4. ALGORITMO FIREFLY (FA) - INTEGRADO
+# 4. ALGORITMO FIREFLY (FA)
 # =============================================================================
 
 def run_firefly(func_name, bounds_min, bounds_max, problem_type="min"):
-    """
-    Implementación basada en Firefly.py del profesor.
-    Lógica: Las luciérnagas se mueven hacia las más brillantes.
-    """
-    # Parámetros del profesor
+
     ALPHA = 0.2     # Aleatoriedad
     BETA_0 = 1.0    # Atractivo base
     GAMMA = 0.005   # Absorción de luz
@@ -251,7 +313,7 @@ def run_firefly(func_name, bounds_min, bounds_max, problem_type="min"):
     history = [best_ff.fitness.values[0]]
     
     for _ in range(N_ITERATIONS):
-        # En el código del profesor, se ordenan primero (opcional pero ayuda a la convergencia)
+    
         fireflies.sort(key=lambda x: x.fitness.values[0], reverse=(problem_type == "max"))
         
         for i in range(N_AGENTS):
@@ -280,7 +342,6 @@ def run_firefly(func_name, bounds_min, bounds_max, problem_type="min"):
                     moved = True
             
             # Si no se sintió atraída por nadie, movimiento aleatorio (Random Walk)
-            # Tal como aparece en el código del profesor
             if not moved:
                 for d in range(DIMENSIONS):
                     rand_step = ALPHA * (random.random() - 0.5) * (bounds_max - bounds_min)
