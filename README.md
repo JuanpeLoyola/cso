@@ -214,14 +214,37 @@ Basado en el patrón de destello de las luciérnagas:
 - El proyecto utiliza `uv` como gestor de dependencias para garantizar reproducibilidad y velocidad de instalación
 - El archivo `uv.lock` asegura que todos instalen exactamente las mismas versiones de dependencias
 - Los scripts pueden ejecutarse como notebooks Jupyter gracias a `ipykernel`
-- Todos los algoritmos usan la misma semilla aleatoria (42) para comparación justa
+- Todos los algoritmos usan la misma semilla aleatoria (42) para comparación justa y reproducible
 - Los gráficos se generan automáticamente en alta resolución (300 DPI) en el directorio `images/`
+- El código del algoritmo CSO está completamente comentado para facilitar su comprensión
 
-## 👨‍💻 Autor
+## 🎓 Ejemplo de salida
+
+Al ejecutar el script, verás:
+1. Progreso de ejecución de cada algoritmo en cada benchmark
+2. Dos ventanas con las gráficas de convergencia
+3. Tabla comparativa en consola:
+
+```
+Resultados Finales (Mejor encontrado):
+--------------------------------------------------
+Algoritmo  | Rosenbrock (Min)     | H1 (Max)            
+--------------------------------------------------
+CSO        | 1.2345e-02           | 8.5432
+PSO        | 2.3456e-02           | 8.1234
+ACO        | 3.4567e-02           | 7.9876
+Firefly    | 1.5678e-02           | 8.3456
+--------------------------------------------------
+```
+
+## 👨‍💻 Autores
+
+**Juan Pedro García Sanz** y **Adolfo Peña Marín**
 
 Implementación para el Máster en Inteligencia Artificial  
+Universidad: [Tu Universidad]  
 Fecha: Diciembre 2025
 
 ## 📄 Licencia
 
-Este proyecto es para fines educativos.
+Este proyecto es para fines educativos y académicos.
