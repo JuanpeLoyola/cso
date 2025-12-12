@@ -59,7 +59,7 @@ def get_evaluate_func(func_name):
 
 def run_cso(func_name, bounds_min, bounds_max, problem_type="min"):
     """
-    Implementa Cat Swarm Optimization
+    Cat Swarm Optimization
     Los gatos alternan entre dos modos: Seeking (exploración) y Tracing (explotación)
     """
     # Parámetros CSO
